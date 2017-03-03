@@ -1,0 +1,5 @@
+*.pyc
+\logs\*.logs
+venv
+.project
+.pydevproject
