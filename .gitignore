@@ -1,6 +1,8 @@
 *.pyc
-\logs\*.logs
+*.logs
+logs
 venv
 .project
 .pydevproject
+.idea
 test.py
