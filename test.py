@@ -6,6 +6,8 @@ sys.setdefaultencoding('utf-8')
 import requests
 from lxml import etree
 from location_dict_scrawler import PARTNER, UUID, GUID
+import spider_gevent
+import analysis
 
 LIST_URL = "http://api.51job.com/api/job/search_job_list.php"
 DETAIL_URL = "http://api.51job.com/api/job/get_job_info.php"
@@ -43,7 +45,16 @@ HEADERS = {"User-Agent": "51job-android-client",
            "Host": "api.51job.com"
            }
 
-response = requests.get(LIST_URL, LIST_QUERY, headers=HEADERS)
-# response = requests.get(DETAIL_URL, DETAIL_QUERY, headers=HEADERS)
-xml = etree.fromstring(response.content)
-print xml.xpath("//totalcount/text()")
+# response = requests.get(LIST_URL, LIST_QUERY, headers=HEADERS)
+# # response = requests.get(DETAIL_URL, DETAIL_QUERY, headers=HEADERS)
+# xml = etree.fromstring(response.content)
+# print xml.xpath("//totalcount/text()")
+
+
+spi = spider_gevent.MultiProcessAsynSpider(analysis.BasicAnalysis(), jobarea="030700")
+spi.run()
+output = spi.get_output()
+print output.get_results()
+
+
+

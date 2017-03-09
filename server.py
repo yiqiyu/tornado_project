@@ -22,7 +22,7 @@ server_info = {
     "system_name": "tornado-API",
 }
 define("port", default=8888, type=int)
-define("concurrent", default=0, type=int)
+define("concurrent", default=1, type=int)
 
 
 class MainHandler(tornado.web.RequestHandler):
@@ -34,9 +34,9 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [("/", MainHandler),
                     ("/search", view.ScrawlerHandler),
-                    ("/test", view.TestHandler)]
+                    ("/test", view.TestHandler),
+                    ("/fast_search", view.MultiProScralerHandler)]
         tornado.web.Application.__init__(self, handlers, debug=False)
-
 
 
 def main():
