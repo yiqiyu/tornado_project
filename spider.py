@@ -93,9 +93,8 @@ class AsynSpider(MySpider):
             self.worker()
         yield self.q.join()
         assert self.fetching == self.fetched
-        print len(self.fetched)
-        self._out.finished()
-
+        # print len(self.fetched)
+        self._out.finish()
 
     @gen.coroutine
     def worker(self):
@@ -125,7 +124,7 @@ class AsynSpider(MySpider):
                         self.list_query["pageno"] = pageno
                         next_list_url = LIST_URL + urllib.urlencode(self.list_query)
                         self.q.put(next_list_url)
-                        logging.info(next_list_url)
+                        # logging.info(next_list_url)
                         pageno += 1
                 job_ids = xml.xpath("//jobid/text()")
                 job_detail_urls = []
@@ -135,7 +134,7 @@ class AsynSpider(MySpider):
                     job_detail_urls.append(DETAIL_URL + urllib.urlencode(new_detail_query))
                 for detail_url in job_detail_urls:
                     self.q.put(detail_url)
-                    logging.info(detail_url)
+                    # logging.info(detail_url)
 
             else:
                 self._out.collect(xml)

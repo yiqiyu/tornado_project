@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 from spider import *
-from gevent import monkey; monkey.patch_all(thread=False, socket=False, select=False)
+from gevent import monkey; monkey.patch_all()
 import gevent
 from gevent.queue import JoinableQueue
 import multiprocessing
@@ -26,7 +26,7 @@ class AsynSpiderWithGevent(MySpider):
             gevent.spawn(self.worker)
         self.q.join()
         assert self.fetching == self.fetched
-        self._out.finished()
+        self._out.finish()
 
     def worker(self):
         while True:
@@ -53,7 +53,7 @@ class AsynSpiderWithGevent(MySpider):
                         self.list_query["pageno"] = pageno
                         next_list_url = LIST_URL + urllib.urlencode(self.list_query)
                         self.q.put(next_list_url)
-                        logging.info(next_list_url)
+                        # logging.info(next_list_url)
                         pageno += 1
                 job_ids = xml.xpath("//jobid/text()")
                 job_detail_urls = []
@@ -63,7 +63,7 @@ class AsynSpiderWithGevent(MySpider):
                     job_detail_urls.append(DETAIL_URL + urllib.urlencode(new_detail_query))
                 for detail_url in job_detail_urls:
                     self.q.put(detail_url)
-                    logging.info(detail_url)
+                    # logging.info(detail_url)
 
             else:
                 self._out.collect(xml)
@@ -80,7 +80,6 @@ class MultiProcessAsynSpider(MySpider):
         results = [url]
         while not spider.q.empty():
             results.append(spider.q.get())
-        print results
         return results
 
     def run(self):
@@ -93,15 +92,14 @@ class MultiProcessAsynSpider(MySpider):
             spider.run()
             results.put(spider.get_output())
 
-        processes = [multiprocessing.Process(None, distribute, args=[all_lists[i::4]]) for i in range(CPU_COUNT)]
+        processes = [multiprocessing.Process(None, distribute, args=(all_lists[i::4],)) for i in range(CPU_COUNT)]
         for p in processes:
             p.start()
         for p in processes:
             p.join()
         while not results.empty():
-            print results.get().get_results()
             self._out.combine(results.get())
-        self._out.finished()
+        self._out.finish()
 
 
 

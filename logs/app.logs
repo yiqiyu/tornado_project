@@ -1,54 +1,20 @@
-[E 170305 19:58:53 web:1548] Uncaught exception GET /test (::1)
-    HTTPServerRequest(protocol='http', host='localhost:8888', method='GET', uri='/test', version='HTTP/1.1', remote_ip='::1', headers={'Accept-Language': 'zh-CN,zh;q=0.8', 'Accept-Encoding': 'gzip, deflate, sdch, br', 'Host': 'localhost:8888', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36', 'Connection': 'keep-alive', 'Cache-Control': 'max-age=0', 'Upgrade-Insecure-Requests': '1'})
-    Traceback (most recent call last):
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/web.py", line 1469, in _execute
-        result = yield result
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/gen.py", line 1015, in run
-        value = future.result()
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/concurrent.py", line 237, in result
-        raise_exc_info(self._exc_info)
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/gen.py", line 270, in wrapper
-        result = func(*args, **kwargs)
-      File "/home/dante/桌面/scrawler project/view.py", line 52, in get
-        self.write(reduce(lambda x, y: x+y, a))
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/web.py", line 708, in write
-        raise TypeError(message)
-    TypeError: write() only accepts bytes, unicode, and dict objects
-[E 170305 19:58:53 web:1971] 500 GET /test (::1) 21.88ms
-[W 170305 19:58:53 web:1971] 404 GET /favicon.ico (::1) 0.44ms
-[E 170305 20:00:00 web:1548] Uncaught exception GET /test (::1)
-    HTTPServerRequest(protocol='http', host='localhost:8888', method='GET', uri='/test', version='HTTP/1.1', remote_ip='::1', headers={'Accept-Language': 'zh-CN,zh;q=0.8', 'Accept-Encoding': 'gzip, deflate, sdch, br', 'Host': 'localhost:8888', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36', 'Connection': 'keep-alive', 'Cache-Control': 'max-age=0', 'Upgrade-Insecure-Requests': '1'})
-    Traceback (most recent call last):
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/web.py", line 1469, in _execute
-        result = yield result
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/gen.py", line 1015, in run
-        value = future.result()
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/concurrent.py", line 237, in result
-        raise_exc_info(self._exc_info)
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/gen.py", line 270, in wrapper
-        result = func(*args, **kwargs)
-      File "/home/dante/桌面/scrawler project/view.py", line 52, in get
-        self.write(a[0])
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/web.py", line 708, in write
-        raise TypeError(message)
-    TypeError: write() only accepts bytes, unicode, and dict objects
-[E 170305 20:00:00 web:1971] 500 GET /test (::1) 22.69ms
-[E 170305 20:00:41 web:1548] Uncaught exception GET /test (::1)
-    HTTPServerRequest(protocol='http', host='localhost:8888', method='GET', uri='/test', version='HTTP/1.1', remote_ip='::1', headers={'Accept-Language': 'zh-CN,zh;q=0.8', 'Accept-Encoding': 'gzip, deflate, sdch, br', 'Host': 'localhost:8888', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36', 'Connection': 'keep-alive', 'Cache-Control': 'max-age=0', 'Upgrade-Insecure-Requests': '1'})
-    Traceback (most recent call last):
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/web.py", line 1469, in _execute
-        result = yield result
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/gen.py", line 1015, in run
-        value = future.result()
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/concurrent.py", line 237, in result
-        raise_exc_info(self._exc_info)
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/gen.py", line 270, in wrapper
-        result = func(*args, **kwargs)
-      File "/home/dante/桌面/scrawler project/view.py", line 53, in get
-        self.write(a[0])
-      File "/home/dante/.local/lib/python2.7/site-packages/tornado/web.py", line 708, in write
-        raise TypeError(message)
-    TypeError: write() only accepts bytes, unicode, and dict objects
-[E 170305 20:00:41 web:1971] 500 GET /test (::1) 17.29ms
-[I 170305 20:01:15 web:1971] 200 GET /test (::1) 16.53ms
-[I 170305 20:37:59 web:1971] 200 GET /test (::1) 3011.05ms
+[I 170310 14:44:25 process:133] Starting 4 processes
+[I 170310 14:44:41 web:1971] 200 GET /search?jobarea=030700 (::1) 3862.79ms
+[I 170310 14:45:40 web:1971] 200 GET /fast_search?jobarea=030700 (::1) 40859.22ms
+[I 170310 14:45:55 web:1971] 200 GET /fast_search?jobarea=030700 (::1) 40509.84ms
+[I 170310 14:46:04 web:1971] 200 GET /fast_search?jobarea=030700 (::1) 37153.31ms
+[I 170310 14:46:08 web:1971] 200 GET /fast_search?jobarea=030700 (::1) 42216.13ms
+[I 170310 15:04:28 process:133] Starting 4 processes
+[I 170310 15:05:07 web:1971] 200 GET /fast_search?jobarea=030700 (::1) 32411.55ms
+[I 170310 15:12:12 process:133] Starting 4 processes
+[I 170310 15:12:53 web:1971] 200 GET /fast_search?jobarea=030700 (::1) 32182.99ms
+[I 170310 17:10:20 process:133] Starting 4 processes
+[I 170310 17:11:31 web:1971] 200 GET /fast_search?jobarea=030700 (::1) 64384.68ms
+[I 170310 17:12:10 web:1971] 200 GET /fast_search?jobarea=030700 (::1) 18034.28ms
+[I 170310 17:12:41 web:1971] 200 GET /fast_search?jobarea=030700 (::1) 16934.44ms
+[I 170310 17:15:28 process:133] Starting 4 processes
+[I 170310 17:16:06 web:1971] 200 GET /fast_search?jobarea=030700 (::1) 32376.66ms
+[I 170310 17:16:38 process:133] Starting 4 processes
+[I 170310 17:17:14 web:1971] 200 GET /fast_search?jobarea=030700 (::1) 31855.55ms
+[I 170310 17:17:43 process:133] Starting 4 processes
+[I 170310 17:18:04 web:1971] 200 GET /fast_search?jobarea=030700 (::1) 18008.47ms

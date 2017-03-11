@@ -24,7 +24,7 @@ class Analysis(object):
     def __init__(self):
         self._finished = False
 
-    def finished(self):
+    def finish(self):
         self._finished = True
 
     def has_finished(self):

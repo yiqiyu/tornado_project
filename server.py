@@ -22,7 +22,7 @@ server_info = {
     "system_name": "tornado-API",
 }
 define("port", default=8888, type=int)
-define("concurrent", default=1, type=int)
+define("concurrent", default=0, type=int)
 
 
 class MainHandler(tornado.web.RequestHandler):

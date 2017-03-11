@@ -20,14 +20,22 @@ import analysis
 class Catch(object):
     @staticmethod
     def catch_and_log_asyn(func):
-        return gen.coroutine(Catch.catch_and_log(func))
+        @gen.coroutine
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                yield func(*args, **kwargs)
+            except Exception as e:
+                logging.error(e)
+                logging.error(traceback.format_exc())
+        return wrapper
 
     @staticmethod
     def catch_and_log(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             try:
-                yield func(*args, **kwargs)
+                func(*args, **kwargs)
             except Exception as e:
                 logging.error(e)
                 logging.error(traceback.format_exc())
@@ -70,7 +78,7 @@ class ScrawlerHandler(tornado.web.RequestHandler):
         spi = spider.AsynSpider(analysis.BasicAnalysis(), jobarea=jobarea)
         yield spi.run()
         output = spi.get_output()
-        self.write(json.dumps(output.get_results))
+        self.write(json.dumps(output.get_results()))
 
 
 class MultiProScralerHandler(tornado.web.RequestHandler):
@@ -82,4 +90,4 @@ class MultiProScralerHandler(tornado.web.RequestHandler):
         spi = spider_gevent.MultiProcessAsynSpider(analysis.BasicAnalysis(), jobarea=jobarea)
         spi.run()
         output = spi.get_output()
-        self.write(json.dumps(output.get_results))
+        self.write(json.dumps(output.get_results()))
