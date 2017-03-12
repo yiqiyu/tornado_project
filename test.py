@@ -52,14 +52,20 @@ import time
 # print xml.xpath("//totalcount/text()")
 
 
-start = time.time()
-spi = spider_gevent.MultiProcessAsynSpider(analysis.BasicAnalysis(), jobarea="030700")
-# spi = spider_gevent.AsynSpiderWithGevent(analysis.BasicAnalysis(), jobarea="030700")
-spi.run()
-output = spi.get_output()
-end = time.time()
-print end - start
-print output.get_results()
+# start = time.time()
+# spi = spider_gevent.MultiProcessAsynSpider(analysis.BasicAnalysis(), jobarea="030700")
+# # spi = spider_gevent.AsynSpiderWithGevent(analysis.BasicAnalysis(), jobarea="030700")
+# spi.run()
+# output = spi.get_output()
+# end = time.time()
+# print end - start
+# print output.get_results()
+from common import mongodb
+mgclient = mongodb.Mongodb()
+# mgclient.renewCityCode()
+for entry in mgclient.conn["51job"]["cityCode"].find():
+    print entry
+
 
 
 

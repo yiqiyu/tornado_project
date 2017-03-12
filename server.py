@@ -35,7 +35,7 @@ class Application(tornado.web.Application):
         handlers = [("/", MainHandler),
                     ("/search", view.ScrawlerHandler),
                     ("/test", view.TestHandler),
-                    ("/fast_search", view.MultiProScralerHandler)]
+                    ("/gev_search", view.GevScralerHandler)]
         tornado.web.Application.__init__(self, handlers, debug=False)
 
 

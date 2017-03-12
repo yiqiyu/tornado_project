@@ -10,8 +10,6 @@ import tornado.web
 from tornado.web import gen
 import tornado.ioloop
 
-
-# import mongodb
 import spider
 import spider_gevent
 import analysis
@@ -81,13 +79,13 @@ class ScrawlerHandler(tornado.web.RequestHandler):
         self.write(json.dumps(output.get_results()))
 
 
-class MultiProScralerHandler(tornado.web.RequestHandler):
+class GevScralerHandler(tornado.web.RequestHandler):
     @Catch.catch_and_log
     def get(self):
         jobarea = self.get_query_argument("jobarea", "")
         if not jobarea:
             self.write_error(400)
-        spi = spider_gevent.MultiProcessAsynSpider(analysis.BasicAnalysis(), jobarea=jobarea)
+        spi = spider_gevent.AsynSpiderWithGevent(analysis.BasicAnalysis(), jobarea=jobarea)
         spi.run()
         output = spi.get_output()
         self.write(json.dumps(output.get_results()))
