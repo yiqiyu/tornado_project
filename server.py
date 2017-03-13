@@ -29,8 +29,8 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [("/", view.MainHandler),
                     ("/api", APIHandler),
-                    ("/api/search", view.ScrawlerHandler),
-                    ("/api/gev_search", view.GevScralerHandler)]
+                    ("/api/search", view.CrawlerHandler),
+                    ("/api/gev_search", view.GevCrawlerHandler)]
         tornado.web.Application.__init__(self, handlers, debug=False, template_path="./template")
 
 

@@ -16,8 +16,6 @@ import spider_gevent
 import analysis
 
 
-
-
 class Catch(object):
     @staticmethod
     def catch_and_log_asyn(func):
@@ -55,7 +53,7 @@ class MainHandler(tornado.web.RequestHandler):
             return self.write(result)
 
 
-class ScrawlerHandler(tornado.web.RequestHandler):
+class CrawlerHandler(tornado.web.RequestHandler):
     @Catch.catch_and_log_asyn
     @gen.coroutine
     def get(self):
@@ -68,7 +66,7 @@ class ScrawlerHandler(tornado.web.RequestHandler):
         self.write(json.dumps(output.get_results()))
 
 
-class GevScralerHandler(tornado.web.RequestHandler):
+class GevCrawlerHandler(tornado.web.RequestHandler):
     @Catch.catch_and_log
     def get(self):
         jobarea = self.get_query_argument("jobarea", "")
