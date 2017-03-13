@@ -24,19 +24,19 @@ class Mongodb(object):
                 self.__conn = MongoClient(serverIP, port, w=0)
                 # self.__conn.admin.authenticate(user, passwd)
                 self.__logger.info("Open conneciton to [%s:%d]", serverIP, port)
-            except Exception as e :
+            except Exception as e:
                 self.__logger.error(e)
-                raise Exception(e)
-        if self.__db_config is None :
+                # raise Exception(e)
+        if self.__db_config is None:
             self.__db_config = self.__conn.config
 
     def getCityCode(self, name):
         try:
             result = self.__conn["51job"]["cityCode"].find_one({"name": name})
-            return result["code"]
+            return result["code"] if result else None
         except Exception as e:
             self.__logger.error(e)
-            raise Exception(e)
+            # raise Exception(e)
 
     def renewCityCode(self):
         collection = self.__conn["51job"]["cityCode"]
@@ -75,20 +75,3 @@ class Mongodb(object):
     @property
     def conn(self):
         return self.__conn
-
-    #if __name__ == '__main__':
-#    db = Mongodb("mongodb",27017)
-    #domainList = db.getDomainList({"accessByCH":1})
-#    print domainList
-#    docList = []
-#    _id= hashlib.md5("http://www.124.com1").hexdigest()
-#    doc = {"title":"this is tes111111","_id":"2222222"}
-#    docList.append(doc)
-#    print db.bulkInsert("news","test.com",docList)
-#    proxyList = db.getProxyList(1) 
-#    print proxyList
-    
-    
-    
-    
-    

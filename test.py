@@ -63,8 +63,7 @@ import time
 from common import mongodb
 mgclient = mongodb.Mongodb()
 # mgclient.renewCityCode()
-for entry in mgclient.conn["51job"]["cityCode"].find():
-    print entry
+print mgclient.getCityCode("广州")
 
 
 

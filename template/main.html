@@ -1,0 +1,41 @@
+<!Doctype html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8">
+        <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.min.js"></script>
+    </head>
+    <body>
+	<title>51job spider</title>
+        <form> 
+        查询地区:
+            <input type="text" id="txt1" onkeyup="getCityCode(this.value)" placeholder="请键入区域名" />
+            <button type="button" id="submit" disabled="disabled" onclick="launchSpider()">提交查询</button>
+        </form>
+
+	<p id="display"></p>
+
+	<script type="text/javascript">
+
+	function getCityCode(str) {
+	    if (str.length==0){ 
+	      $("#submit").attr("disabled", "disabled");
+	      return;
+	      }
+	    $.post("/", {name: str}, function(data) {
+						if (data != null) {
+						    $("#submit").attr("data", data).removeAttr("disabled");
+						}
+				   	  });
+
+	}
+
+	function launchSpider() {
+	    var req = "/api/search?jobarea=" + $("#submit").attr("data");
+		alert(req)
+	    location.href=req;
+	    return;	
+	}
+	</script> 
+
+    </body>
+</html>

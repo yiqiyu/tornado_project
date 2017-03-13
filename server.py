@@ -1,12 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import importlib
-import json
-import logging
-import os.path
 import socket
-import requests
 
 import tornado.httpserver
 import tornado.ioloop
@@ -25,18 +20,18 @@ define("port", default=8888, type=int)
 define("concurrent", default=0, type=int)
 
 
-class MainHandler(tornado.web.RequestHandler):
+class APIHandler(tornado.web.RedirectHandler):
     def get(self):
-        self.write(json.dumps(server_info))
+        self.write(server_info)
 
 
 class Application(tornado.web.Application):
     def __init__(self):
-        handlers = [("/", MainHandler),
-                    ("/search", view.ScrawlerHandler),
-                    ("/test", view.TestHandler),
-                    ("/gev_search", view.GevScralerHandler)]
-        tornado.web.Application.__init__(self, handlers, debug=False)
+        handlers = [("/", view.MainHandler),
+                    ("/api", APIHandler),
+                    ("/api/search", view.ScrawlerHandler),
+                    ("/api/gev_search", view.GevScralerHandler)]
+        tornado.web.Application.__init__(self, handlers, debug=False, template_path="./template")
 
 
 def main():

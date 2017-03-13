@@ -10,9 +10,12 @@ import tornado.web
 from tornado.web import gen
 import tornado.ioloop
 
+from common import mongodb
 import spider
 import spider_gevent
 import analysis
+
+
 
 
 class Catch(object):
@@ -40,30 +43,16 @@ class Catch(object):
         return wrapper
 
 
-
-class TestHandler(tornado.web.RequestHandler):
-    @gen.coroutine
+class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        import multiprocessing
-        import time
-        a = multiprocessing.Array("i", 10)
+        self.render("main.html")
 
-        def worker():
-            time.sleep(3)
-            a[0] += 1
-
-        processes = [multiprocessing.Process(None, worker) for _ in range(4)]
-        try:
-            for p in processes:
-                p.daemon = True
-                p.start()
-            for p in processes:
-                p.join()
-            self.write(str(a[0]))
-        finally:
-            for p in processes:
-                p.terminate()
-
+    def post(self, *args, **kwargs):
+        DB_CLIENT = mongodb.Mongodb()
+        name = self.get_body_argument("name", "全国")
+        result = DB_CLIENT.getCityCode(name.encode("utf-8"))
+        if result:
+            return self.write(result)
 
 
 class ScrawlerHandler(tornado.web.RequestHandler):
