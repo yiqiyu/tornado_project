@@ -1,7 +1,7 @@
 *.pyc
 *.logs
-logs
-venv
+/logs
+/venv
 .project
 .pydevproject
 .idea
