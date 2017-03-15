@@ -78,11 +78,12 @@ class BasicAnalysis(Analysis, OutMixin):
         for k, v in self._categories.iteritems():
             if k == "total":
                 continue
-            if float(v) / self._categories["total"] > threshold:  # 砍掉过少的部分优化展示
-                results.append({"name": k, "value": v})
+            percentage = round(float(v) / self._categories["total"], 3)
+            if percentage > threshold:  # 砍掉过少的部分优化展示
+                results.append({"name": k, "value": percentage})
             else:
-                amount += v
-        results.append({"name": "其他", "value": amount})
+                amount += percentage
+        results.append({"name": "其他", "value": round(amount, 3)})
         return results
 
     def combine(self, other):
