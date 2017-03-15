@@ -48,8 +48,8 @@ class AsynSpiderWithGevent(MySpider):
                     return  # 列表跨界
                 if self.list_query["pageno"] == 1:
                     pageno = 2
-                    while pageno < 10:
-                    # while pageno <= total_count / PAGE_SIZE:
+                    # while pageno < 10:
+                    while pageno <= total_count / PAGE_SIZE:
                         self.list_query["pageno"] = pageno
                         next_list_url = LIST_URL + urllib.urlencode(self.list_query)
                         self.q.put(next_list_url)

@@ -3,6 +3,7 @@
     <head>
         <meta http-equiv="content-type" content="text/html;charset=utf-8">
         <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/echarts/3.4.0/echarts.common.js"></script>
     </head>
     <body>
 	<title>51job spider</title>
@@ -12,7 +13,7 @@
             <button type="button" id="submit" disabled="disabled" onclick="launchSpider()">提交查询</button>
         </form>
 
-	<p id="display"></p>
+	<div id="display" style="width: 1000px;height:800px;"></div>
 
 	<script type="text/javascript">
 
@@ -30,10 +31,40 @@
 	}
 
 	function launchSpider() {
-	    var req = "/api/search?jobarea=" + $("#submit").attr("data");
-		alert(req)
-	    location.href=req;
+	    //var req = "/api/search?ajax=true&jobarea=" + $("#submit").attr("data");
+	    //location.href=req;
+	    var req = "/api/search";
+	    $.ajax({
+		url: req, 
+		type: "GET",
+		data: {ajax: "true", jobarea: $("#submit").attr("data")},
+ 		success: renderGraph,
+		beforeSend: waitingResults,
+		});
 	    return;	
+	}
+	
+	function renderGraph(data) {
+	    $("#loading").remove()
+	    var myChart = echarts.init(document.getElementById("display"));
+
+	    var option = {
+	        title: {
+	            text: '行业招聘分布'
+	        },
+	        series: [{
+		    radius: '55%',
+	            name: '数量',
+	            type: 'pie',
+	            data: JSON.parse(data)
+	        }]
+	    };
+
+            myChart.setOption(option);	
+	}
+	
+	function waitingResults(XMLReq) {
+	    	$("#display").append("<div id='loading'><img src='{{ static_url('loading.gif') }}' /><div>");
 	}
 	</script> 
 

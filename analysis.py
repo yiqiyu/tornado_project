@@ -70,6 +70,21 @@ class BasicAnalysis(Analysis, OutMixin):
         self.sum_up()
         return self._categories
 
+    def get_results_for_echarts(self):
+        self.sum_up()
+        results = []
+        threshold = 0.015
+        amount = 0
+        for k, v in self._categories.iteritems():
+            if k == "total":
+                continue
+            if float(v) / self._categories["total"] > threshold:  # 砍掉过少的部分优化展示
+                results.append({"name": k, "value": v})
+            else:
+                amount += v
+        results.append({"name": "其他", "value": amount})
+        return results
+
     def combine(self, other):
         if isinstance(other, BasicAnalysis):
             self._categories += other._categories

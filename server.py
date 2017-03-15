@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 
 import socket
+import os
 
 import tornado.httpserver
 import tornado.ioloop
@@ -30,8 +31,14 @@ class Application(tornado.web.Application):
         handlers = [("/", view.MainHandler),
                     ("/api", APIHandler),
                     ("/api/search", view.CrawlerHandler),
-                    ("/api/gev_search", view.GevCrawlerHandler)]
-        tornado.web.Application.__init__(self, handlers, debug=False, template_path="./template")
+                    ("/api/gev_search", view.GevCrawlerHandler),
+                    ]
+        option = {
+            "debug": False,
+            "template_path": "./template",
+            "static_path": "./static"
+                 }
+        tornado.web.Application.__init__(self, handlers, **option)
 
 
 def main():

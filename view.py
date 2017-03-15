@@ -45,6 +45,11 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("main.html")
 
+
+class MainHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("main.html")
+
     def post(self, *args, **kwargs):
         DB_CLIENT = mongodb.Mongodb()
         name = self.get_body_argument("name", "全国")
@@ -58,12 +63,16 @@ class CrawlerHandler(tornado.web.RequestHandler):
     @gen.coroutine
     def get(self):
         jobarea = self.get_query_argument("jobarea", "")
+        ajax = self.get_query_argument("ajax", "")
         if not jobarea:
             self.write_error(400)
         spi = spider.AsynSpider(analysis.BasicAnalysis(), jobarea=jobarea)
         yield spi.run()
         output = spi.get_output()
-        self.write(json.dumps(output.get_results()))
+        if ajax == "true":
+            self.write(json.dumps(output.get_results_for_echarts()))
+        else:
+            self.write(json.dumps(output.get_results()))
 
 
 class GevCrawlerHandler(tornado.web.RequestHandler):
