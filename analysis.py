@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-import multiprocessing
+from common import mongodb
+import time
+from operator import itemgetter
+
+import jieba.analyse as jieba_analyse
+import nltk
 
 
 class AnalysisException(Exception):
@@ -9,15 +14,16 @@ class AnalysisException(Exception):
 
 class OutMixin(object):
     def collect(self, item):
-        raise Exception("Method collect hasn't been implemented.")
+        raise NotImplementedError
 
 
-class OutQueue(OutMixin):
+class CorpusDBOut(OutMixin):
     def __init__(self):
-        self.q = multiprocessing.Queue()
+        self.client = mongodb.Mongodb()
 
     def collect(self, item):
-        self.q.put(item)
+        desc = item.xpath("//jobinfo/text()")[0]
+
 
 
 class Analysis(object):
@@ -29,6 +35,9 @@ class Analysis(object):
 
     def has_finished(self):
         return self._finished
+
+    def get_results(self):
+        raise NotImplementedError
 
 
 class AddableDict(dict):
@@ -43,6 +52,12 @@ class AddableDict(dict):
             return tmp
         else:
             raise Exception("Not the same type!")
+
+    def count(self, item):
+        if item in self:
+            self[item] += 1
+        else:
+            self.setdefault(item, 1)
 
 
 class BasicAnalysis(Analysis, OutMixin):
@@ -66,9 +81,12 @@ class BasicAnalysis(Analysis, OutMixin):
             total_collect += value
         self._categories["total"] = total_collect
 
-    def get_results(self):
-        self.sum_up()
-        return self._categories
+    def get_results(self, ajax=False):
+        if ajax == "true":
+            return self.get_results_for_echarts()
+        else:
+            self.sum_up()
+            return self._categories
 
     def get_results_for_echarts(self):
         self.sum_up()
@@ -92,3 +110,34 @@ class BasicAnalysis(Analysis, OutMixin):
         else:
             raise AnalysisException("Not the same type!")
 
+
+class CommonTagsAnalysis(Analysis, OutMixin):
+    def __init__(self):
+        super(CommonTagsAnalysis, self).__init__()
+        self._tags = AddableDict()
+
+    def collect(self, xml):
+        desc = xml.xpath("//jobinfo/text()")[0]
+        tags = jieba_analyse.extract_tags(desc, topK=30)
+        for tag in tags:
+            self._tags.count(tag)
+
+    def rank(self):
+        tmp = sorted(list(self._tags.iteritems()), key=lambda x: x[1])
+        self._tags = dict(tmp[:20])
+
+    def get_results(self, ajax=False):
+        self.rank()
+        if ajax == "true":
+            return self.get_results_for_echarts()
+        else:
+            print time.ctime()
+            return self._tags
+
+    def get_results_for_echarts(self):
+        return [{"name": k, "value": v} for k, v in self._tags.iteritems()]
+
+
+class IndustryTagsAnalysis(CommonTagsAnalysis):
+    def collect(self, xml):     #TODO
+        pass

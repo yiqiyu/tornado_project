@@ -32,6 +32,7 @@ class Application(tornado.web.Application):
                     ("/api", APIHandler),
                     ("/api/search", view.CrawlerHandler),
                     ("/api/gev_search", view.GevCrawlerHandler),
+                    ("/api/gettags", view.GetTagsHandler)
                     ]
         option = {
             "debug": False,

@@ -5,3 +5,5 @@ tornado==4.4.2
 greenlet==0.4.12
 gevent==1.2.1
 pymongo==3.4.0
+ntlk==3.2.2
+jieba==0.38

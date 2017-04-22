@@ -64,17 +64,28 @@ class SpiderException(Exception):
 
 class MySpider(object):
     def __init__(self, out=BasicAnalysis(), **kwargs):
-        self.list_query = LIST_QUERY.copy()
         self._out = out
+        self.list_query = LIST_QUERY.copy()
         for k,v in kwargs.items():
             if k in self.list_query.keys():
                 self.list_query[k] = v
+
+    def assign_jobs(self, jobs):
+        raise NotImplementedError
 
     def get_output(self):
         if self._out.has_finished():
             return self._out
         else:
-            raise SpiderException("Spider is not finished!")
+            raise SpiderException("Spider has not finished!")
+
+    @staticmethod
+    def createJob(args):
+        list_query = LIST_QUERY.copy()
+        for k,v in args.items():
+            if k in list_query.keys():
+                list_query[k] = v
+        return LIST_URL + urllib.urlencode(list_query)
 
 
 class AsynSpider(MySpider):
@@ -84,11 +95,15 @@ class AsynSpider(MySpider):
         self.q = Queue()
         self.fetching, self.fetched = set(), set()
 
+    def assign_jobs(self, jobs):
+        for job in jobs:
+            self.q.put(job)
+
     @gen.coroutine
     def run(self):
-        url = LIST_URL + urllib.urlencode(self.list_query)
-
-        self.q.put(url)
+        if self.q.empty():
+            url = LIST_URL + urllib.urlencode(self.list_query)
+            self.q.put(url)
         for _ in range(CONCURRENCY):
             self.worker()
         yield self.q.join()
@@ -142,3 +157,15 @@ class AsynSpider(MySpider):
             self.q.task_done()
 
 
+class MultiRequestSpiderFactory(object):
+    def getSpider(self, out, args):
+        """
+        :param args: 为一个数组，每个数组为一个字典，必须有键kwargs，kwargs为对应的spider的请求参数字典
+        :return: 返回相应的spider实例
+        """
+        if len(args) == 1:
+            return AsynSpider(out, **args[0]["kwargs"])
+        elif len(args) > 1:
+            spider = AsynSpider(out)
+            spider.assign_jobs([MySpider.createJob(arg) for arg in args])
+            return spider

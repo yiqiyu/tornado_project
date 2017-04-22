@@ -45,11 +45,6 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("main.html")
 
-
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render("main.html")
-
     def post(self, *args, **kwargs):
         DB_CLIENT = mongodb.Mongodb()
         name = self.get_body_argument("name", "全国")
@@ -69,10 +64,7 @@ class CrawlerHandler(tornado.web.RequestHandler):
         spi = spider.AsynSpider(analysis.BasicAnalysis(), jobarea=jobarea)
         yield spi.run()
         output = spi.get_output()
-        if ajax == "true":
-            self.write(json.dumps(output.get_results_for_echarts()))
-        else:
-            self.write(json.dumps(output.get_results()))
+        self.write(json.dumps(output.get_results(ajax)))
 
 
 class GevCrawlerHandler(tornado.web.RequestHandler):
@@ -85,3 +77,31 @@ class GevCrawlerHandler(tornado.web.RequestHandler):
         spi.run()
         output = spi.get_output()
         self.write(json.dumps(output.get_results()))
+
+
+class CollectCorpus(tornado.web.RequestHandler):
+    @Catch.catch_and_log_asyn
+    @gen.coroutine
+    def get(self):
+        db_client = mongodb.Mongodb()
+        # jobareas = [db_client.getCityCode(name) for name in ("北京", "广州", "上海", "深圳")]
+        jobareas = [{"jobarea": db_client.getCityCode(name)} for name in ("北京")]
+        spi = spider.MultiRequestSpiderFactory().getSpider(analysis.CorpusDBOut, jobareas)
+        yield spi.run()
+        output = spi.get_output()
+
+
+class GetTagsHandler(tornado.web.RequestHandler):
+    # @Catch.catch_and_log_asyn
+    @gen.coroutine
+    def get(self):
+        jobarea = self.get_query_argument("jobarea", "")
+        key = self.get_query_argument("key", "")
+        ajax = self.get_query_argument("ajax", "")
+        if not jobarea or not key:
+            self.write_error(400)
+        spi = spider.AsynSpider(analysis.CommonTagsAnalysis(), jobarea=jobarea, key=key)
+        yield spi.run()
+        output = spi.get_output()
+        self.write(json.dumps(output.get_results(ajax)))
+
