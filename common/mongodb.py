@@ -1,4 +1,7 @@
 # coding=utf-8
+import StringIO
+import math
+
 from pymongo import MongoClient
 import requests
 from lxml import etree
@@ -29,6 +32,7 @@ class Mongodb(object):
                 # raise Exception(e)
         if self.__db_config is None:
             self.__db_config = self.__conn.config
+        self.project_db = self.__conn["51job"]
 
     def getCityCode(self, name):
         try:
@@ -39,7 +43,7 @@ class Mongodb(object):
             # raise Exception(e)
 
     def renewCityCode(self):
-        collection = self.__conn["51job"]["cityCode"]
+        collection = self.project_db["cityCode"]
         if collection.count() > 0:
             collection.delete_many({})
         url = "http://appapi.51job.com/api/datadict/get_dd_jobarea.php"
@@ -71,6 +75,35 @@ class Mongodb(object):
             else:
                 city_code.append({"name": city, "code": code})
         collection.insert_many(city_code)
+
+    def getJobIDF(self):
+        """
+
+        :return: StringIO
+        """
+        collection = self.project_db["tagIDF"]
+        io = StringIO.StringIO()
+        for doc in collection.find():
+            io.write("%s %f" % (doc["word"], doc["IDF"]))
+        return io
+
+    def updateJobTagCorpus(self, cuts):
+        collection = self.project_db["tagCorpus"]
+        collection.insert({"cuts": set(cut.encode("utf-8") for cut in cuts)})
+
+    def buildOrUpdateJobIDF(self):
+        tag_corpus = self.project_db["tagCorpus"]
+        tag_IDF = self.project_db["tagIDF"]
+        all_docs = tag_corpus.find()
+        total_count = float(all_docs.count())
+        for doc in all_docs:
+            for cut in doc["cuts"]:
+                exist = tag_IDF.find_one_and_update({"word": cut},
+                                                    {"$inc": {"count": 1}},
+                                                    upsert=True)
+        for IDF in tag_IDF.find():
+            tag_IDF.find_one_and_update({"_id": IDF["_id"]},
+                                        {"$set": {"IDF": math.log(total_count/(IDF["count"]+1))}})
 
     @property
     def conn(self):

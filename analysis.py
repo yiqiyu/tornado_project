@@ -4,6 +4,7 @@ from common import mongodb
 import time
 from operator import itemgetter
 
+import jieba
 import jieba.analyse as jieba_analyse
 import nltk
 
@@ -22,7 +23,9 @@ class CorpusDBOut(OutMixin):
         self.client = mongodb.Mongodb()
 
     def collect(self, item):
-        desc = item.xpath("//jobinfo/text()")[0]
+        desc = item.xpath("//jobinfo/text()")[0].encode("utf-8")
+        cuts = jieba.cut(desc, cut_all=False)
+        self.client.updateJobTagCorpus(cuts)
 
 
 
@@ -139,5 +142,10 @@ class CommonTagsAnalysis(Analysis, OutMixin):
 
 
 class IndustryTagsAnalysis(CommonTagsAnalysis):
+    def __init__(self):
+        super(IndustryTagsAnalysis, self).__init__()
+        self.client = mongodb.Mongodb()
+        self.tfidf = jieba_analyse.TFIDF(self.client.getJobIDF())
+
     def collect(self, xml):     #TODO
         pass
