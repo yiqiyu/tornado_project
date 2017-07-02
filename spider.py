@@ -10,12 +10,9 @@ from tornado.queues import Queue
 import urllib
 from lxml import etree
 
-from analysis import BasicAnalysis
+from analysis import BasicAnalysis, Analysis
+from settings import *
 
-#IDs in query string, could change in any time
-PARTNER = "bceb5aaaa832653d5b26e2756e74bb64"
-UUID = "e5eb7bf894f10fa2a4a3982a0dcf8609"
-GUID = "133090b8365c94f3f2bf7848540ca784"
 
 LIST_URL = "http://api.51job.com/api/job/search_job_list.php?"
 DETAIL_URL = "http://api.51job.com/api/job/get_job_info.php?"
@@ -74,10 +71,13 @@ class MySpider(object):
         raise NotImplementedError
 
     def get_output(self):
-        if self._out.has_finished():
-            return self._out
+        if isinstance(self._out, Analysis):
+            if self._out.has_finished():
+                return self._out
+            else:
+                raise SpiderException("Spider has not finished!")
         else:
-            raise SpiderException("Spider has not finished!")
+            return self._out
 
     @staticmethod
     def createJob(args):
@@ -109,7 +109,8 @@ class AsynSpider(MySpider):
         yield self.q.join()
         assert self.fetching == self.fetched
         # print len(self.fetched)
-        self._out.finish()
+        if isinstance(self._out, Analysis):
+            self._out.finish()
 
     @gen.coroutine
     def worker(self):
@@ -134,7 +135,7 @@ class AsynSpider(MySpider):
                     return  # 列表跨界
                 if self.list_query["pageno"] == 1:
                     pageno = 2
-                    while pageno < 10:
+                    while pageno < 3:
                     # while pageno <= total_count / PAGE_SIZE:
                         self.list_query["pageno"] = pageno
                         next_list_url = LIST_URL + urllib.urlencode(self.list_query)
@@ -164,8 +165,9 @@ class MultiRequestSpiderFactory(object):
         :return: 返回相应的spider实例
         """
         if len(args) == 1:
-            return AsynSpider(out, **args[0]["kwargs"])
+
+            return AsynSpider(out(), **args[0].get("kwargs", {}))
         elif len(args) > 1:
-            spider = AsynSpider(out)
+            spider = AsynSpider(out())
             spider.assign_jobs([MySpider.createJob(arg) for arg in args])
             return spider

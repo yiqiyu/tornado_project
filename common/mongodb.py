@@ -1,6 +1,7 @@
 # coding=utf-8
 import StringIO
 import math
+import traceback
 
 from pymongo import MongoClient
 import requests
@@ -8,7 +9,7 @@ from lxml import etree
 from bson.objectid import ObjectId
 
 import logManager
-from spider import PARTNER, UUID, GUID
+from settings import *
 
 
 class Mongodb(object):
@@ -84,27 +85,12 @@ class Mongodb(object):
         collection = self.project_db["tagIDF"]
         io = StringIO.StringIO()
         for doc in collection.find():
-            io.write("%s %f" % (doc["word"], doc["IDF"]))
+            io.write("%s %f\n" % (doc["word"], doc["IDF"]))
         return io
-
-    def updateJobTagCorpus(self, cuts):
-        collection = self.project_db["tagCorpus"]
-        collection.insert({"cuts": set(cut.encode("utf-8") for cut in cuts)})
-
-    def buildOrUpdateJobIDF(self):
-        tag_corpus = self.project_db["tagCorpus"]
-        tag_IDF = self.project_db["tagIDF"]
-        all_docs = tag_corpus.find()
-        total_count = float(all_docs.count())
-        for doc in all_docs:
-            for cut in doc["cuts"]:
-                exist = tag_IDF.find_one_and_update({"word": cut},
-                                                    {"$inc": {"count": 1}},
-                                                    upsert=True)
-        for IDF in tag_IDF.find():
-            tag_IDF.find_one_and_update({"_id": IDF["_id"]},
-                                        {"$set": {"IDF": math.log(total_count/(IDF["count"]+1))}})
 
     @property
     def conn(self):
         return self.__conn
+
+
+

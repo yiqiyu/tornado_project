@@ -18,7 +18,7 @@ server_info = {
     "system_name": "tornado-API",
 }
 define("port", default=8888, type=int)
-define("concurrent", default=0, type=int)
+define("concurrent", default=1, type=int)
 
 
 class APIHandler(tornado.web.RedirectHandler):
@@ -32,7 +32,8 @@ class Application(tornado.web.Application):
                     ("/api", APIHandler),
                     ("/api/search", view.CrawlerHandler),
                     ("/api/gev_search", view.GevCrawlerHandler),
-                    ("/api/gettags", view.GetTagsHandler)
+                    ("/api/get_tags", view.GetTagsHandler),
+                    ("/api/collect_corpus", view.CollectCorpus)
                     ]
         option = {
             "debug": False,

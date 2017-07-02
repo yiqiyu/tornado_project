@@ -85,14 +85,20 @@ class CollectCorpus(tornado.web.RequestHandler):
     def get(self):
         db_client = mongodb.Mongodb()
         # jobareas = [db_client.getCityCode(name) for name in ("北京", "广州", "上海", "深圳")]
-        jobareas = [{"jobarea": db_client.getCityCode(name)} for name in ("北京")]
+        jobareas = [{"jobarea": db_client.getCityCode(name)} for name in ("北京", )]
         spi = spider.MultiRequestSpiderFactory().getSpider(analysis.CorpusDBOut, jobareas)
+        print "start collecting corpus"
         yield spi.run()
+        print "corpus collecting finished"
         output = spi.get_output()
+        res = {
+            "result": output.buildIDF()
+        }
+        self.write(res)
 
 
 class GetTagsHandler(tornado.web.RequestHandler):
-    # @Catch.catch_and_log_asyn
+    @Catch.catch_and_log_asyn
     @gen.coroutine
     def get(self):
         jobarea = self.get_query_argument("jobarea", "")
@@ -100,8 +106,10 @@ class GetTagsHandler(tornado.web.RequestHandler):
         ajax = self.get_query_argument("ajax", "")
         if not jobarea or not key:
             self.write_error(400)
-        spi = spider.AsynSpider(analysis.CommonTagsAnalysis(), jobarea=jobarea, key=key)
+        print "start collecting tags"
+        spi = spider.AsynSpider(analysis.IndustryTagsAnalysis(), jobarea=jobarea, key=key)
         yield spi.run()
+        print "tags collecting finished"
         output = spi.get_output()
         self.write(json.dumps(output.get_results(ajax)))
 
