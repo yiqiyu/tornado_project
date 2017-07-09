@@ -10,7 +10,7 @@
         <form> 
         查询地区:
             <input type="text" id="txt1" onkeyup="getCityCode(this.value)" placeholder="请键入区域名" />
-            <button type="button" id="submit" disabled="disabled" onclick="launchSpider()">提交查询</button>
+            <button type="button" id="submit" disabled="disabled" onclick="launchSpider(this)" data-arg="jobarea">提交查询</button>
         </form>
 
 	<div id="display" style="width: 1000px;height:800px;"></div>
@@ -30,14 +30,14 @@
 
 	}
 
-	function launchSpider() {
+	function launchSpider(obj) {
 	    //var req = "/api/search?ajax=true&jobarea=" + $("#submit").attr("data");
 	    //location.href=req;
 	    var req = "/api/search";
 	    $.ajax({
 		url: req, 
 		type: "GET",
-		data: {ajax: "true", jobarea: $("#submit").attr("data")},
+		data: {ajax: "true", obj.data("arg"): obj.attr("data")},
  		success: renderGraph,
 		beforeSend: waitingResults,
 		});
