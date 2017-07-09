@@ -65,6 +65,34 @@
 
             myChart.setOption(option);	
 	}
+		
+	function renderWordcloud(data) {
+	    $("#loading").remove()
+	    var myChart = echarts.init(document.getElementById("display"));
+
+	    var option = {
+	        title: {
+	            text: '职位关键字'
+	        },
+		tooltip: {
+		    show: true
+		},
+		
+	        series: [{
+		    type: 'wordCloud',
+		    size: ['80%', '80%'],
+		    textRotation : [0, 30],
+		    textPadding: 0,
+		    autoSize: {
+			    enable: true,
+			    minSize: 14
+		    },
+	            data: JSON.parse(data)
+	        }]
+	    };
+
+            myChart.setOption(option);	
+	}
 	
 	function waitingResults(XMLReq) {
 	    	$("#display").append("<div id='loading'><img src='{{ static_url('loading.gif') }}' /><div>");
