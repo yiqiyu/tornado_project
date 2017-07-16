@@ -107,7 +107,7 @@ class GetTagsHandler(tornado.web.RequestHandler):
         if not jobarea or not key:
             self.write_error(400)
         print "start collecting tags"
-        spi = spider.AsynSpider(analysis.IndustryTagsAnalysis(), jobarea=jobarea, key=key)
+        spi = spider.AsynSpider(analysis.IndustryTagsAnalysis(), jobarea=jobarea, keyword=key)
         yield spi.run()
         print "tags collecting finished"
         output = spi.get_output()

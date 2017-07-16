@@ -28,6 +28,8 @@ LIST_QUERY = {
     "pagesize": PAGE_SIZE,
     "accountid": "",
     "key": "",
+    "keyword": "java",
+    "kewwordtype": 2,
     "productname": "51job",
     "partner": PARTNER,
     "uuid": UUID,
@@ -65,7 +67,7 @@ class MySpider(object):
         self.list_query = LIST_QUERY.copy()
         for k,v in kwargs.items():
             if k in self.list_query.keys():
-                self.list_query[k] = v
+                self.list_query[k] = v.encode("utf-8")
 
     def assign_jobs(self, jobs):
         raise NotImplementedError
@@ -135,7 +137,7 @@ class AsynSpider(MySpider):
                     return  # 列表跨界
                 if self.list_query["pageno"] == 1:
                     pageno = 2
-                    while pageno < 3:
+                    while pageno < 10:
                     # while pageno <= total_count / PAGE_SIZE:
                         self.list_query["pageno"] = pageno
                         next_list_url = LIST_URL + urllib.urlencode(self.list_query)

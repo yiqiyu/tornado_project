@@ -153,6 +153,7 @@ class CommonTagsAnalysis(Analysis, OutMixin):
         desc = xml.xpath("//jobinfo/text()")[0]
         tags = jieba_analyse.extract_tags(desc, topK=30, allowPOS=self.allowPOS, withWeight=True)
         for tag, weight in tags:
+            tag = tag.lower()
             self._tags[tag] = self._tags.setdefault(tag, 0) + weight
 
     def rank(self):
@@ -184,5 +185,6 @@ class IndustryTagsAnalysis(CommonTagsAnalysis):
         desc = xml.xpath("//jobinfo/text()")[0]
         tags = self.tfidf.extract_tags(desc, topK=30, allowPOS=self.allowPOS, withWeight=True)
         for tag, weight in tags:
+            tag = tag.lower()
             self._tags[tag] = self._tags.setdefault(tag, 0) + weight
-            print tag, weight
+            # print tag, weight
