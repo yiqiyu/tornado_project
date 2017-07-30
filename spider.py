@@ -72,14 +72,14 @@ class MySpider(object):
     def assign_jobs(self, jobs):
         raise NotImplementedError
 
-    def get_output(self):
+    def get_output(self, ajax=False):
         if isinstance(self._out, Analysis):
             if self._out.has_finished():
-                return self._out
+                return self._out.get_results(ajax)
             else:
                 raise SpiderException("Spider has not finished!")
         else:
-            return self._out
+            return self._out.get_results(ajax)
 
     @staticmethod
     def createJob(args):

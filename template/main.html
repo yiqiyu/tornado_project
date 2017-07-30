@@ -8,96 +8,26 @@
     <body>
 	<title>51job spider</title>
         <form> 
-        查询地区:
-            <input type="text" id="txt1" onkeyup="getCityCode(this.value)" placeholder="请键入区域名" />
-            <button type="button" id="submit" disabled="disabled" onclick="launchSpider(this)" data-arg="jobarea">提交查询</button>
+        查询地区的工作领域分布:
+            <input type="text" id="txt_1" onkeyup="getCityCode(this, 'submit_dist')" placeholder="请键入区域名" />
+            <button type="button" id="submit_dist" onclick="launchSpider(this)">提交查询</button>
+        </form>
+        <form>
+        查询地区的某工作关键字:
+            <input type="text" id="txt_21" onkeyup="getCityCode(this, 'submit_tags')" placeholder="请键入区域名" />
+            <input type="text" id="txt_22" onkeyup="fillData(this)" placeholder="请键入工作关键字" />
+            <button type="button" id="submit_tags" onclick="launchSpider(this)" data-arg="jobarea">提交查询</button>
         </form>
 
+
 	<div id="display" style="width: 1000px;height:800px;"></div>
-
-	<script type="text/javascript">
-
-	function getCityCode(str) {
-	    if (str.length==0){ 
-	      $("#submit").attr("disabled", "disabled");
-	      return;
-	      }
-	    $.post("/", {name: str}, function(data) {
-						if (data != null) {
-						    $("#submit").attr("data", data).removeAttr("disabled");
-						}
-				   	  });
-
-	}
-
-	function launchSpider(obj) {
-	    //var req = "/api/search?ajax=true&jobarea=" + $("#submit").attr("data");
-	    //location.href=req;
-	    var req = "/api/search";
-	    $.ajax({
-		url: req, 
-		type: "GET",
-		data: {ajax: "true", obj.data("arg"): obj.attr("data")},
- 		success: renderGraph,
-		beforeSend: waitingResults,
-		});
-	    return;	
-	}
-	
-	function renderGraph(data) {
-	    $("#loading").remove()
-	    var myChart = echarts.init(document.getElementById("display"));
-
-	    var option = {
-	        title: {
-	            text: '行业招聘分布'
-	        },
-		tooltip: {
-		    show: true
-		},
-	        series: [{
-		    radius: '55%',
-	            name: '数量',
-	            type: 'pie',
-	            data: JSON.parse(data)
-	        }]
-	    };
-
-            myChart.setOption(option);	
-	}
-		
-	function renderWordcloud(data) {
-	    $("#loading").remove()
-	    var myChart = echarts.init(document.getElementById("display"));
-
-	    var option = {
-	        title: {
-	            text: '职位关键字'
-	        },
-		tooltip: {
-		    show: true
-		},
-		
-	        series: [{
-		    type: 'wordCloud',
-		    size: ['80%', '80%'],
-		    textRotation : [0, 30],
-		    textPadding: 0,
-		    autoSize: {
-			    enable: true,
-			    minSize: 14
-		    },
-	            data: JSON.parse(data)
-	        }]
-	    };
-
-            myChart.setOption(option);	
-	}
-	
-	function waitingResults(XMLReq) {
-	    	$("#display").append("<div id='loading'><img src='{{ static_url('loading.gif') }}' /><div>");
-	}
-	</script> 
+    <script>
+        function waitingResults(XMLReq) {
+            $("#display").append("<div id='loading'><img src='{{ static_url('loading.gif') }}' /><div>");
+        }
+    </script>
+	<script type="text/javascript" src="{{ static_url('index.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('echarts-wordcloud.min.js') }}"></script>
 
     </body>
 </html>

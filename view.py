@@ -63,8 +63,8 @@ class CrawlerHandler(tornado.web.RequestHandler):
             self.write_error(400)
         spi = spider.AsynSpider(analysis.BasicAnalysis(), jobarea=jobarea)
         yield spi.run()
-        output = spi.get_output()
-        self.write(json.dumps(output.get_results(ajax)))
+        output = spi.get_output(ajax)
+        self.write(json.dumps({"type": "dist", "data": output}))
 
 
 class GevCrawlerHandler(tornado.web.RequestHandler):
@@ -76,7 +76,7 @@ class GevCrawlerHandler(tornado.web.RequestHandler):
         spi = spider_gevent.AsynSpiderWithGevent(analysis.BasicAnalysis(), jobarea=jobarea)
         spi.run()
         output = spi.get_output()
-        self.write(json.dumps(output.get_results()))
+        self.write(json.dumps(output))
 
 
 class CollectCorpus(tornado.web.RequestHandler):
@@ -92,7 +92,7 @@ class CollectCorpus(tornado.web.RequestHandler):
         print "corpus collecting finished"
         output = spi.get_output()
         res = {
-            "result": output.buildIDF()
+            "result": output
         }
         self.write(res)
 
@@ -110,6 +110,6 @@ class GetTagsHandler(tornado.web.RequestHandler):
         spi = spider.AsynSpider(analysis.IndustryTagsAnalysis(), jobarea=jobarea, keyword=key)
         yield spi.run()
         print "tags collecting finished"
-        output = spi.get_output()
-        self.write(json.dumps(output.get_results(ajax)))
+        output = spi.get_output(ajax)
+        self.write(json.dumps({"type": "tags", "data": output}))
 

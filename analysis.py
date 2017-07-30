@@ -20,6 +20,9 @@ class OutMixin(object):
     def collect(self, item):
         raise NotImplementedError
 
+    def get_results(self):
+        raise NotImplementedError
+
 
 class CorpusDBOut(OutMixin):
     def __init__(self):
@@ -54,6 +57,9 @@ class CorpusDBOut(OutMixin):
             print traceback.print_exc()
             return False
 
+    def get_results(self):
+        return self.buildIDF()
+
 
 class Analysis(object):
     def __init__(self):
@@ -64,9 +70,6 @@ class Analysis(object):
 
     def has_finished(self):
         return self._finished
-
-    def get_results(self):
-        raise NotImplementedError
 
 
 class AddableDict(dict):
