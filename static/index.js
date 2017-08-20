@@ -10,6 +10,7 @@ function fillData(obj) {
 function getCityCode(obj) {
     if (obj.value.length==0){
 //      $("#" +tag).attr("disabled", "disabled");
+      alert("输入的地区不存在！")
       return;
       }
     $.post("/", {name: obj.value},
@@ -86,12 +87,12 @@ function renderGraph(raw_data) {
 
             series: [{
             type: 'wordCloud',
-            size: ['80%', '80%'],
+            size: ['340%', '340%'],
             textRotation : [0, 30],
             textPadding: 0,
             autoSize: {
                 enable: true,
-                minSize: 14
+                minSize: 50
             },
             data: data["data"]
             }]
